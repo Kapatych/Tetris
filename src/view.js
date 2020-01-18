@@ -36,7 +36,6 @@ export default class View {
         this.panelWidth = this.width / 3;
         this.panelHeight = this.height;
 
-
         this.element.appendChild(this.canvas);
     }
 
@@ -66,7 +65,7 @@ export default class View {
     }
 
     renderEndScreen ({score}) {
-       this.clearScreen();
+        this.clearScreen();
 
         this.context.fillStyle = 'white';
         this.context.textAlign = "center";
@@ -74,6 +73,7 @@ export default class View {
         this.context.font = '18px "Press Start 2P"';
         this.context.fillText('GAME OVER', this.width / 2, this.height / 2 - 48);
         this.context.fillText(`Score: ${score}`, this.width / 2, this.height / 2);
+        this.context.fillText('Press ENTER to Restart', this.width / 2, this.height / 2 + 48);
     }
 
     clearScreen () {

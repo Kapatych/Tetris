@@ -1,5 +1,6 @@
 export default class Game {
-
+    static rows = 20;
+    static columns = 10;
     static points = {
         '1': 40,
         '2': 100,
@@ -7,54 +8,13 @@ export default class Game {
         '4': 1200
     };
 
-    score = 0;
-    lines = 0;
-    playfield = this.createPlayfield(20, 10);
-    activePiece = this.createPiece();
-    nextPiece = this.createPiece();
-
-    get level () {
-        return Math.floor( this.lines * 0.1 )
-    }
-
-    getState() {
-        const playfield = this.createPlayfield(20, 10);
-        const {y: pieceY, x: pieceX, blocks} = this.activePiece;
-
-        // TODO: why is this cycle?
-        for (let y = 0; y < this.playfield.length; y++) {
-            //playfield[y] = [];
-
-            for (let x = 0; x < this.playfield[y].length; x++) {
-                playfield[y][x] = this.playfield[y][x];
-            }
-        }
-
-        for (let y = 0; y < blocks.length; y++) {
-            for (let x = 0; x < blocks[y].length; x++) {
-                if (blocks[y][x]) {
-                    playfield[pieceY + y][pieceX + x] = blocks[y][x];
-                }
-            }
-        }
-
-        return {
-            score: this.score,
-            level: this.level,
-            lines: this.lines,
-            nextPiece: this.nextPiece,
-            playfield
-        };
-
-    }
-
-    createPlayfield (rows, columns) {
+    static createPlayfield () {
         const playfield = [];
 
-        for (let y = 0; y < rows; y++) {
+        for (let y = 0; y < Game.rows; y++) {
             playfield[y] = [];
 
-            for (let x = 0; x < columns; x++) {
+            for (let x = 0; x < Game.columns; x++) {
                 playfield[y][x] = 0
             }
         }
@@ -62,7 +22,7 @@ export default class Game {
         return playfield;
     }
 
-    createPiece () {
+    static createPiece () {
         const index = Math.floor( Math.random() * 7 );
         const type = 'IJLOSTZ'[index];
         const piece = {};
@@ -126,8 +86,55 @@ export default class Game {
         piece.x = Math.floor( (10 - piece.blocks[0].length) /2 );
         piece.y = -1;
 
-
         return piece;
+    }
+
+    constructor () {
+        this.resetState();
+    }
+
+    get level () {
+        return Math.floor( this.lines * 0.1 )
+    }
+
+    getState() {
+        const playfield = Game.createPlayfield();
+        const {y: pieceY, x: pieceX, blocks} = this.activePiece;
+
+        // Copy playfield
+        for (let y = 0; y < this.playfield.length; y++) {
+            for (let x = 0; x < this.playfield[y].length; x++) {
+                playfield[y][x] = this.playfield[y][x];
+            }
+        }
+
+        //Active figure in playfield
+        for (let y = 0; y < blocks.length; y++) {
+            for (let x = 0; x < blocks[y].length; x++) {
+                if (blocks[y][x]) {
+                    playfield[pieceY + y][pieceX + x] = blocks[y][x];
+                }
+            }
+        }
+
+        return {
+            score: this.score,
+            level: this.level,
+            lines: this.lines,
+            nextPiece: this.nextPiece,
+            playfield: playfield,
+            isGameOver: this.topOut
+        };
+
+    }
+
+    resetState () {
+        this.score = 0;
+        this.lines = 0;
+        this.topOut = false;
+        this.playfield = Game.createPlayfield();
+        this.activePiece = Game.createPiece();
+        this.nextPiece = Game.createPiece();
     }
 
     movePieceLeft() {
@@ -147,6 +154,8 @@ export default class Game {
     }
 
     movePieceDown() {
+        if (this.topOut) return;
+
         this.activePiece.y += 1;
 
         if (this.hasCollision()) {
@@ -155,6 +164,10 @@ export default class Game {
             const clearedLines = this.clearLines();
             this.updateScore(clearedLines);
             this.updatePieces();
+        }
+
+        if (this.hasCollision()) {
+            this.topOut = true;
         }
     }
 
@@ -211,14 +224,12 @@ export default class Game {
     }
 
     clearLines () {
-        const rows = 20;
-        const columns = 10;
         let lines = [];
 
-        for (let y = rows - 1; y >= 0; y--) {
+        for (let y = Game.rows - 1; y >= 0; y--) {
             let quantityOfBlocks = 0;
 
-            for (let x = 0; x < columns; x++) {
+            for (let x = 0; x < Game.columns; x++) {
                 if (this.playfield[y][x]) {
                     quantityOfBlocks += 1;
                 }
@@ -226,16 +237,14 @@ export default class Game {
 
             if (!quantityOfBlocks) {
                 break;
-            } else if (quantityOfBlocks === columns) {
+            } else if (quantityOfBlocks === Game.columns) {
                 lines.unshift(y);
-            } /*else {
-                continue;
-            }*/
+            }
         }
 
         for (let index of lines) {
             this.playfield.splice(index, 1);
-            this.playfield.unshift( new Array(columns).fill(0))
+            this.playfield.unshift( new Array(Game.columns).fill(0))
         }
 
         return lines.length;
@@ -243,7 +252,7 @@ export default class Game {
 
     updatePieces() {
         this.activePiece = this.nextPiece;
-        this.nextPiece = this.createPiece();
+        this.nextPiece = Game.createPiece();
     }
 
     updateScore (clearedLines) {
