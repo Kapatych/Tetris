@@ -10,7 +10,7 @@ export default class View {
         '7': 'red'
     };
 
-    constructor (element, width, height, rows, columns) {
+    constructor(element, width, height, rows, columns) {
         this.element = element;
         this.width = width;
         this.height = height;
@@ -21,7 +21,8 @@ export default class View {
         this.context = this.canvas.getContext('2d');
 
         this.playfieldBorderWidth = 4;
-        this.playfieldX = this.playfieldY = this.playfieldBorderWidth;
+        this.playfieldX = this.playfieldBorderWidth;
+        this.playfieldY = this.playfieldBorderWidth;
         this.playfieldWidth = this.width * 2 / 3;
         this.playfieldHeight = this.height;
         this.playfieldInnerWidth = this.playfieldWidth - (this.playfieldBorderWidth * 2);
@@ -33,19 +34,17 @@ export default class View {
 
         this.panelX = this.playfieldWidth + 10;
         this.panelY = 0;
-        this.panelWidth = this.width / 3;
-        this.panelHeight = this.height;
 
         this.element.appendChild(this.canvas);
     }
 
-    renderMainScreen (state) {
+    renderMainScreen(state) {
         this.clearScreen();
         this.renderPlayfield(state);
         this.renderPanel(state);
     }
 
-    renderStartScreen () {
+    renderStartScreen() {
         this.context.fillStyle = 'white';
         this.context.textAlign = "center";
         this.context.textBaseline = "middle";
@@ -53,9 +52,9 @@ export default class View {
         this.context.fillText('Press ENTER to start', this.width / 2, this.height / 2);
     }
 
-    renderPauseScreen () {
+    renderPauseScreen() {
         this.context.fillStyle = 'rgba(0, 0, 0, 0.75)';
-        this.context.fillRect(0 ,0, this.width, this.height);
+        this.context.fillRect(0, 0, this.width, this.height);
 
         this.context.fillStyle = 'white';
         this.context.textAlign = "center";
@@ -64,7 +63,7 @@ export default class View {
         this.context.fillText('Press ENTER to Resume', this.width / 2, this.height / 2);
     }
 
-    renderEndScreen ({score}) {
+    renderEndScreen({score}) {
         this.clearScreen();
 
         this.context.fillStyle = 'white';
@@ -76,16 +75,14 @@ export default class View {
         this.context.fillText('Press ENTER to Restart', this.width / 2, this.height / 2 + 48);
     }
 
-    clearScreen () {
+    clearScreen() {
         this.context.clearRect(0, 0, this.width, this.height);
     }
 
-    renderPlayfield ({playfield}) {
+    renderPlayfield({playfield}) {
         for (let y = 0; y < playfield.length; y++) {
-            const line = playfield[y];
-
-            for (let x = 0; x < line.length; x++) {
-                const block = line[x];
+            for (let x = 0; x < playfield[y].length; x++) {
+                const block = playfield[y][x];
 
                 if (block) {
                     this.renderBlock(
@@ -104,7 +101,7 @@ export default class View {
         this.context.strokeRect(0, 0, this.playfieldWidth, this.playfieldHeight);
     }
 
-    renderPanel ({score, level, lines, nextPiece, }) {
+    renderPanel({score, level, lines, nextPiece,}) {
         this.context.textAlign = "start";
         this.context.textBaseline = "top";
         this.context.fillStyle = 'white';
@@ -133,7 +130,7 @@ export default class View {
 
     }
 
-    renderBlock (x, y, width, height, color) {
+    renderBlock(x, y, width, height, color) {
         this.context.fillStyle = color;
         this.context.strokeStyle = 'black';
         this.context.lineWidth = 2;

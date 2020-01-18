@@ -8,7 +8,7 @@ export default class Game {
         '4': 1200
     };
 
-    static createPlayfield () {
+    static createPlayfield() {
         const playfield = [];
 
         for (let y = 0; y < Game.rows; y++) {
@@ -22,79 +22,79 @@ export default class Game {
         return playfield;
     }
 
-    static createPiece () {
-        const index = Math.floor( Math.random() * 7 );
+    static createPiece() {
+        const index = Math.floor(Math.random() * 7);
         const type = 'IJLOSTZ'[index];
         const piece = {};
 
         switch (type) {
             case 'I':
                 piece.blocks = [
-                    [0,0,0,0],
-                    [1,1,1,1],
-                    [0,0,0,0],
-                    [0,0,0,0]
+                    [0, 0, 0, 0],
+                    [1, 1, 1, 1],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
                 ];
                 break;
             case 'J':
                 piece.blocks = [
-                    [0,0,0],
-                    [2,2,2],
-                    [0,0,2],
+                    [0, 0, 0],
+                    [2, 2, 2],
+                    [0, 0, 2],
                 ];
                 break;
             case 'L':
                 piece.blocks = [
-                    [0,0,0],
-                    [3,3,3],
-                    [3,0,0],
+                    [0, 0, 0],
+                    [3, 3, 3],
+                    [3, 0, 0],
                 ];
                 break;
             case 'O':
                 piece.blocks = [
-                    [0,0,0,0],
-                    [0,4,4,0],
-                    [0,4,4,0],
-                    [0,0,0,0]
+                    [0, 0, 0, 0],
+                    [0, 4, 4, 0],
+                    [0, 4, 4, 0],
+                    [0, 0, 0, 0]
                 ];
                 break;
             case 'S':
                 piece.blocks = [
-                    [0,0,0],
-                    [0,5,5],
-                    [5,5,0],
+                    [0, 0, 0],
+                    [0, 5, 5],
+                    [5, 5, 0],
                 ];
                 break;
             case 'T':
                 piece.blocks = [
-                    [0,0,0],
-                    [6,6,6],
-                    [0,6,0],
+                    [0, 0, 0],
+                    [6, 6, 6],
+                    [0, 6, 0],
                 ];
                 break;
             case 'Z':
                 piece.blocks = [
-                    [0,0,0],
-                    [7,7,0],
-                    [0,7,7],
+                    [0, 0, 0],
+                    [7, 7, 0],
+                    [0, 7, 7],
                 ];
                 break;
             default:
                 throw new Error('unknown type of figure!')
         }
 
-        piece.x = Math.floor( (10 - piece.blocks[0].length) /2 );
+        piece.x = Math.floor((10 - piece.blocks[0].length) / 2);
         piece.y = -1;
 
         return piece;
     }
 
-    constructor () {
+    constructor() {
         this.resetState();
     }
 
-    get level () {
-        return Math.floor( this.lines * 0.1 )
+    get level() {
+        return Math.floor(this.lines * 0.1)
     }
 
     getState() {
@@ -123,12 +123,13 @@ export default class Game {
             lines: this.lines,
             nextPiece: this.nextPiece,
             playfield: playfield,
-            isGameOver: this.topOut
+            isGameOver: this.topOut,
+            speed: (1000 - this.level * 100)
         };
 
     }
 
-    resetState () {
+    resetState() {
         this.score = 0;
         this.lines = 0;
         this.topOut = false;
@@ -223,7 +224,7 @@ export default class Game {
         }
     }
 
-    clearLines () {
+    clearLines() {
         let lines = [];
 
         for (let y = Game.rows - 1; y >= 0; y--) {
@@ -244,7 +245,7 @@ export default class Game {
 
         for (let index of lines) {
             this.playfield.splice(index, 1);
-            this.playfield.unshift( new Array(Game.columns).fill(0))
+            this.playfield.unshift(new Array(Game.columns).fill(0));
         }
 
         return lines.length;
@@ -255,7 +256,7 @@ export default class Game {
         this.nextPiece = Game.createPiece();
     }
 
-    updateScore (clearedLines) {
+    updateScore(clearedLines) {
         if (clearedLines > 0) {
             this.score += Game.points[clearedLines] * (this.level + 1);
             this.lines += clearedLines;
