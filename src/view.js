@@ -23,7 +23,7 @@ export default class View {
         this.playfieldBorderWidth = 4;
         this.playfieldX = this.playfieldBorderWidth;
         this.playfieldY = this.playfieldBorderWidth;
-        this.playfieldWidth = this.width * 2 / 3;
+        this.playfieldWidth = 320;
         this.playfieldHeight = this.height;
         this.playfieldInnerWidth = this.playfieldWidth - (this.playfieldBorderWidth * 2);
         this.playfieldInnerHeight = this.playfieldHeight - (this.playfieldBorderWidth * 2);

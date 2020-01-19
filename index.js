@@ -6,7 +6,7 @@ import Controller from './src/controller.js';
 const root = document.querySelector('#root');
 
 const game = new Game();
-const view = new View(root, 480, 640, 20, 10);
+const view = new View(root, 510, 640, 20, 10);
 const controller = new Controller(game, view);
 
 window.game = game;
